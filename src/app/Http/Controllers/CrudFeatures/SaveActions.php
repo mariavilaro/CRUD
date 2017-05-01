@@ -73,12 +73,20 @@ trait SaveActions
         switch ($saveAction) {
             case 'save_and_new':
                 $redirectUrl = $this->crud->route.'/create';
+                if ($returnUrl != $this->crud->route) {
+                    $redirectUrl .= '?return_url='.$returnUrl;
+                }
                 break;
             case 'save_and_edit':
                 $redirectUrl = $this->crud->route.'/'.$itemId.'/edit';
+                $redirectUrl .= '?';
                 if (\Request::has('locale')) {
-                    $redirectUrl .= '?locale='.\Request::input('locale');
+                    $redirectUrl .= 'locale='.\Request::input('locale') . '&';
                 }
+                if ($returnUrl != $this->crud->route) {
+                    $redirectUrl .= 'return_url='.$returnUrl . '&';
+                }
+                $redirectUrl = rtrim($redirectUrl, '?&');
                 break;
             case 'save_and_back':
             default:
@@ -117,13 +125,18 @@ trait SaveActions
      */
     private function getReturnUrl()
     {
+        if (\Request::has('return_url')) {
+            return \Request::input('return_url');
+        }
+
         if (!isset($_SERVER['HTTP_REFERER']) || !isset($_SERVER['HTTP_HOST'])) {
             return $this->crud->route;
         }
 
         $referer = parse_url($_SERVER['HTTP_REFERER']);
 
-        if ($referer['host'] === $_SERVER['HTTP_HOST']) {
+        if ($referer['host'] === $_SERVER['HTTP_HOST'] && (stripos($referer['path'], $this->crud->route))
+                || \Request::has('custom_return_url')) {
             return $_SERVER['HTTP_REFERER'];
         }
 
