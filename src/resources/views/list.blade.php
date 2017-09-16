@@ -4,7 +4,7 @@
 	<section class="content-header">
 	  <h1>
 	    <span class="text-capitalize">{{ $crud->entity_name_plural }}</span>
-	    <small>{{ trans('backpack::crud.all') }} <span class="text-lowercase">{{ $crud->entity_name_plural }}</span> {{ trans('backpack::crud.in_the_database') }}.</small>
+	    <small>{{ trans('backpack::crud.all') }} <span>{{ $crud->entity_name_plural }}</span> {{ trans('backpack::crud.in_the_database') }}.</small>
 	  </h1>
 	  <ol class="breadcrumb">
 	    <li><a href="{{ url(config('backpack.base.route_prefix'), 'dashboard') }}">{{ trans('backpack::crud.admin') }}</a></li>
@@ -178,7 +178,7 @@
       @endif
 
 	  	var table = $("#crudTable").DataTable({
-        "pageLength": "{{ $crud->getDefaultPageLength() }}",
+        "pageLength": {{ $crud->getDefaultPageLength() }},
         /* Disable initial sort */
         "aaSorting": [],
         "language": {
@@ -202,7 +202,15 @@
               "aria": {
                   "sortAscending":  "{{ trans('backpack::crud.aria.sortAscending') }}",
                   "sortDescending": "{{ trans('backpack::crud.aria.sortDescending') }}"
-              }
+              },
+              "buttons": {
+                  "copy":   "{{ trans('backpack::crud.export.copy') }}",
+                  "excel":  "{{ trans('backpack::crud.export.excel') }}",
+                  "csv":    "{{ trans('backpack::crud.export.csv') }}",
+                  "pdf":    "{{ trans('backpack::crud.export.pdf') }}",
+                  "print":  "{{ trans('backpack::crud.export.print') }}",
+                  "colvis": "{{ trans('backpack::crud.export.column_visibility') }}"
+              },
           },
 
           @if ($crud->ajaxTable())
