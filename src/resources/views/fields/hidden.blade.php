@@ -11,7 +11,11 @@
   <input
   	type="hidden"
     name="{{ $field['name'] }}"
+    @if (!old($field['name']) && isset($field['url_param']))
+        value="{{ app('request')->input($field['url_param']) }}"
+    @else
     value="{{ old($field['name']) ? old($field['name']) : (isset($field['value']) ? $field['value'] : (isset($field['default']) ? $field['default'] : '' )) }}"
+    @endif
     @include('crud::inc.field_attributes')
   	>
 </div>
