@@ -65,9 +65,14 @@ trait SaveActions
         switch ($saveAction) {
             case 'save_and_new':
                 $redirectUrl = $this->crud->route.'/create';
-                if ($returnUrl != $this->crud->route) {
-                    $redirectUrl .= '?return_url='.$returnUrl;
+                $redirectUrl .= '?';
+                if ($this->crud->create_param && \Request::has($this->crud->create_param)) {
+                    $redirectUrl .= $this->crud->create_param . '=' . \Request::input($this->crud->create_param) . '&';
                 }
+                if ($returnUrl != $this->crud->route) {
+                    $redirectUrl .= 'return_url='.$returnUrl . '&';
+                }
+                $redirectUrl = rtrim($redirectUrl, '?&');
                 break;
             case 'save_and_edit':
                 $redirectUrl = $this->crud->route.'/'.$itemId.'/edit';
