@@ -128,7 +128,7 @@ trait SaveActions
      * Otherwise get the list all crud route.
      * @return string the return url.
      */
-    private function getReturnUrl()
+    protected function getReturnUrl()
     {
         if (\Request::has('return_url')) {
             return \Request::input('return_url');
