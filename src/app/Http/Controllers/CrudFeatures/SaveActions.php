@@ -140,7 +140,7 @@ trait SaveActions
 
         $referer = parse_url($_SERVER['HTTP_REFERER']);
 
-        if ($referer['host'] === $_SERVER['HTTP_HOST'] && (stripos($referer['path'], $this->crud->route))
+        if ($referer['host'] === $_SERVER['HTTP_HOST'] && (stripos($referer['path'], $this->crud->route)) && isset($referer['query'])
                 || \Request::has('custom_return_url')) {
             return $_SERVER['HTTP_REFERER'];
         }

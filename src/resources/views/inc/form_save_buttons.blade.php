@@ -23,5 +23,5 @@
 
     </div>
 
-    <a href="{{ $returnUrl }}" class="btn btn-default"><span class="fa fa-ban"></span> &nbsp;{{ trans('backpack::crud.cancel') }}</a>
+    <a href="{{ url($returnUrl) }}" class="btn btn-default"><span class="fa fa-ban"></span> &nbsp;{{ trans('backpack::crud.cancel') }}</a>
 </div>
