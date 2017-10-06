@@ -88,6 +88,9 @@ trait SaveActions
                 if (\Request::has('locale')) {
                     $redirectUrl .= 'locale='.\Request::input('locale') . '&';
                 }
+                if ($this->crud->create_param && \Request::has($this->crud->create_param)) {
+                    $redirectUrl .= $this->crud->create_param . '=' . \Request::input($this->crud->create_param) . '&';
+                }
                 if ($returnUrl != $this->crud->route) {
                     $redirectUrl .= 'return_url='.$returnUrl . '&';
                 }
