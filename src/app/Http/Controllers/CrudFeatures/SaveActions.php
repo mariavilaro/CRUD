@@ -80,6 +80,9 @@ trait SaveActions
                 if (\Request::has('locale')) {
                     $redirectUrl .= 'locale='.\Request::input('locale') . '&';
                 }
+                if ($this->crud->create_param && \Request::has($this->crud->create_param)) {
+                    $redirectUrl .= $this->crud->create_param . '=' . \Request::input($this->crud->create_param) . '&';
+                }
                 if ($returnUrl != $this->crud->route) {
                     $redirectUrl .= 'return_url='.$returnUrl . '&';
                 }
@@ -132,7 +135,7 @@ trait SaveActions
 
         $referer = parse_url($_SERVER['HTTP_REFERER']);
 
-        if ($referer['host'] === $_SERVER['HTTP_HOST'] && (stripos($referer['path'], $this->crud->route))
+        if ($referer['host'] === $_SERVER['HTTP_HOST'] && (stripos($referer['path'], $this->crud->route)) && isset($referer['query'])
                 || \Request::has('custom_return_url')) {
             return $_SERVER['HTTP_REFERER'];
         }
