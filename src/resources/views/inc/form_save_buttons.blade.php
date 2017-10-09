@@ -1,5 +1,6 @@
 <div id="saveActions" class="form-group">
 
+    @if ($saveAction['options'])
     <input type="hidden" name="save_action" value="{{ $saveAction['active']['value'] }}">
 
     <div class="btn-group">
@@ -21,6 +22,7 @@
         </ul>
 
     </div>
+    @endif
 
     <a href="{{ url($crud->route) }}" class="btn btn-default"><span class="fa fa-ban"></span> &nbsp;{{ trans('backpack::crud.cancel') }}</a>
 </div>
