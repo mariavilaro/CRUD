@@ -19,6 +19,92 @@ All Notable changes to `Backpack CRUD` will be documented in this file
 ### Security
 - Nothing
 
+-----------
+
+## [3.3.4] - 2017-12-19
+
+## Fixed
+- ENUM field - Updated ```getPossibleEnumValues``` to use ```$instance->getConnectionName()``` so that enum values are correctly queried when the Model uses a non-default database connection - merged #650;
+- addColumn will not overwrite the searchLogic, orderable and tableColumn attributes if otherwise specified;
+- Better sorting effect on "table" fields - merged #466;
+- When using the Autoset trait, the getDbColumnTypes() method used many separate queries to get the column type and column default; improved performance by merging #1159;
+- fakeFields use array_keys_exists instead of isset - merged #734;
+- CrudTrait::addFakes now supports objects - merged #1109;
+
+
+## [3.3.3] - 2017-12-14
+
+## Fixed
+- Chinese translation;
+- datetimepicker icon now triggers datetimepicker js - merged #1097;
+- columns are now picked up using the database connection on the model - merged #1141; fixes #1136;
+- model_function buttons now work for top and bottom stacks too - fixes #713;
+
+## [3.3.2] - 2017-12-12
+
+## Added
+- loading image on ajax datatables, with fallback to old "Processing" text;
+
+## Fixed
+- answers to hasColumns() are now cached, to minimize number of db queries on list view - merged #1122;
+- German translation;
+
+
+## [3.3.1] - 2017-11-06
+
+## Fixed
+- unit tests for column key functionality;
+
+
+## [3.3.0] - 2017-11-06
+
+## Added
+- you can now define a "key" for a column, if you need multiple columns with the same name;
+
+## Fixed
+- in create/update, fields without a tab are displayed before all tabs;
+- unit tests now use PHPUnit 6;
+- completely rewritten AjaxTables functionality;
+- fixed all AjaxTables issues - merged #710;
+
+### Deprecated
+- ```$this->crud->enableAjaxTable();``` still exists for backwards-compatibility, but has been deprecated and does nothing;
+
+### Removed
+- DataTables PHP dependency;
+- all tables now use AjaxTables; there is no classic tables anymore; 
+- removed all classic table filter fallbacks;
+
+-----------
+
+## [3.2.27] - 2017-11-06
+
+## Fixed
+- inline validation on nested attributes - merged #987, fixes #986;
+- morphed entities caused records in the pivot table to duplicate - merged #772, fixes #369;
+- browse field used slash instead of backslash on windows - fixes #496;
+- endless loop when using date_range filter - merged #1092;
+
+
+## [3.2.26] - 2017-10-25
+
+## Added
+- prefix option to upload field type;
+
+## Fixed
+- when creating an entry, pivot fields were overwriting the $field variable - merged #1046;
+- Italian translation file;
+- select fields old data values;
+- date_range field triggered error on Create;
+- bug where non-translatable columns in translatable models got their $guarded updated - merged #754;
+
+
+## [3.2.25] - 2017-10-24
+
+## Added
+- number of records per page menu now features "All", so people can use it before exporting results when using AjaxDataTables;
+- prefix option for the image column (merged #1056; fixes #1054);
+
 
 ## [3.2.24] - 2017-10-23
 
