@@ -4,14 +4,21 @@
     $max = isset($field['max']) && (int) $field['max'] > 0 ? $field['max'] : -1;
     $min = isset($field['min']) && (int) $field['min'] > 0 ? $field['min'] : -1;
     $createParam = isset($field['create_param']) ? $field['create_param'] : NULL;
+    $returnUrl = isset($field['return_url']) ? $field['return_url'] : NULL;
     $item_name = strtolower(isset($field['entity_singular']) && !empty($field['entity_singular']) ? $field['entity_singular'] : $field['label']);
 
     $items = old($field['name']) ? (old($field['name'])) : (isset($field['value']) ? ($field['value']) : (isset($field['default']) ? ($field['default']) : '' ));
 
+    $count_items = 0;
+
+    if (is_object($items)) {
+        $count_items = $items->count();
+    }
     // make sure not matter the attribute casting
     // the $items variable contains a properly defined JSON
     if (is_array($items)) {
         if (count($items)) {
+            $count_items = count($items);
             $items = json_encode($items);
         } else {
             $items = '[]';
@@ -21,7 +28,7 @@
     }
 
 ?>
-<div ng-app="backPackChildTableApp" ng-controller="childTableController" @include('crud::inc.field_wrapper_attributes') >
+<div ng-app="backPackChildTableApp{{ $field['name'] }}" ng-controller="childTableController{{ $field['name'] }}" @include('crud::inc.field_wrapper_attributes') >
 
     <label>{!! $field['label'] !!}</label>
     @include('crud::inc.field_translatable_icon')
@@ -29,7 +36,7 @@
     <input class="array-json" type="hidden" id="{{ $field['name'] }}" name="{{ $field['name'] }}">
 
     <div class="array-container form-group">
-        <table class="table table-bordered table-striped m-b-0" ng-init="field = '#{{ $field['name'] }}'; items = {{ $items }}; max = {{$max}}; min = {{$min}}; maxErrorTitle = '{{trans('backpack::crud.table_cant_add', ['entity' => $item_name])}}'; maxErrorMessage = '{{trans('backpack::crud.table_max_reached', ['max' => $max])}}'">
+        <table class="table table-bordered table-striped m-b-0" ng-init="field = '#{{ $field['name'] }}'; items = {{ $items }}; count_items = {{ $count_items }}; max = {{$max}}; min = {{$min}}; maxErrorTitle = '{{trans('backpack::crud.table_cant_add', ['entity' => $item_name])}}'; maxErrorMessage = '{{trans('backpack::crud.table_max_reached', ['max' => $max])}}'">
             <thead>
                 <tr>
                     @foreach( $field['columns'] as $column )
@@ -47,7 +54,7 @@
             <tbody ui-sortable="sortableOptions" ng-model="items" class="table-striped">
 
                 <tr post-render ng-repeat="item in items" class="array-row" >
-                    
+
                     @foreach ($field['columns'] as $column)
                         <td class="
                             @if ($column['type'] == 'child_hidden') hidden @endif
@@ -86,7 +93,7 @@
 
         <div class="array-controls btn-group m-t-10">
             @if (!isset($field['add_button']) || $field['add_button'] == true)
-            <button ng-if="max == -1 || items.length < max" class="btn btn-sm btn-default" type="button" ng-click="addItem('{{ url($field['route']) }}')"><i class="fa fa-plus"></i> {{trans('backpack::crud.add')}} {{ $item_name }}</button>
+            <button ng-if="max == -1 || count_items < max" class="btn btn-sm btn-default" type="button" ng-click="addItem('{{ url($field['route']) }}')"><i class="fa fa-plus"></i> {{trans('backpack::crud.add')}} {{ $item_name }}</button>
             @endif
         </div>
 
@@ -116,13 +123,28 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-sortable/0.14.3/sortable.min.js"></script>
         <script>
+            angular.element(document).ready(function(){
+                angular.forEach(angular.element('[ng-app]'), function(ctrl){
+                    var ctrlDom = angular.element(ctrl);
+                    if( !ctrlDom.hasClass('ng-scope') ){
+                        angular.bootstrap(ctrl, [ctrlDom.attr('ng-app')]);
+                    }
+                });
+            });
 
-            window.backPackChildTableApp = window.backPackChildTableApp || angular.module('backPackChildTableApp', ['ui.sortable'], function($interpolateProvider){
+        </script>
+
+    @endpush
+@endif
+@push('crud_fields_scripts')
+<script>
+
+    window.backPackChildTableApp{{ $field['name'] }} = window.backPackChildTableApp{{ $field['name'] }} || angular.module('backPackChildTableApp{{ $field['name'] }}', ['ui.sortable'], function($interpolateProvider){
                 $interpolateProvider.startSymbol('<%');
                 $interpolateProvider.endSymbol('%>');
             });
 
-            window.backPackChildTableApp.controller('childTableController', function($scope){
+    window.backPackChildTableApp{{ $field['name'] }}.controller('childTableController{{ $field['name'] }}', function($scope){
 
                 $scope.sortableOptions = {
                     handle: '.sort-handle'
@@ -131,7 +153,7 @@
                 $scope.addItem = function(route){
                     if( $scope.max > -1 ){
                         if( $scope.items.length < $scope.max ){
-                            route = route + '/create?{{ $createParam ? $createParam . "=" . $entry->getKey() : "" }}&custom_return_url=1';
+                    route = route + '/create?{{ $createParam ? $createParam . "=" . $entry->getKey() : "" }}&{{ $returnUrl ? "return_url=" . $returnUrl : "custom_return_url=1" }}';
                             location.href = route;
                         } else {
                             new PNotify({
@@ -142,7 +164,7 @@
                         }
                     }
                     else {
-                        route = route + '/create?{{ $createParam ? $createParam . "=" . $entry->getKey() : "" }}&custom_return_url=1';
+                route = route + '/create?{{ $createParam ? $createParam . "=" . $entry->getKey() : "" }}&{{ $returnUrl ? "return_url=" . $returnUrl : "custom_return_url=1" }}';
                         location.href = route;
                     }
                 }
@@ -156,12 +178,16 @@
                     var index = $scope.items.indexOf(item);
                     $scope.items.splice(index, 1);
                 }
-                
+
                 $scope.editItem = function(route, column_id, item){
-                    route = route + '/' + item[column_id] + '/edit?custom_return_url=1';
+            @if (\Request::has('locale'))
+                route = route + '/' + item[column_id] + '/edit?locale={{ \Request::input('locale') }}&{{ $returnUrl ? "return_url=" . $returnUrl : "custom_return_url=1" }}';
+            @else
+                route = route + '/' + item[column_id] + '/edit?{{ $returnUrl ? "return_url=" . $returnUrl : "custom_return_url=1" }}';
+            @endif
                     location.href = route;
                 }
-                
+
                 $scope.$watch('items', function(a, b){
 
                     if( $scope.min > -1 ){
@@ -186,7 +212,7 @@
                             $scope.field.val('{}');
                         }
                     }
-                    
+
                 }, true);
 
                 if( $scope.min > -1 ){
@@ -195,19 +221,7 @@
                     }
                 }
             });
-        
-            angular.element(document).ready(function(){
-                angular.forEach(angular.element('[ng-app]'), function(ctrl){
-                    var ctrlDom = angular.element(ctrl);
-                    if( !ctrlDom.hasClass('ng-scope') ){
-                        angular.bootstrap(ctrl, [ctrlDom.attr('ng-app')]);
-                    }
-                });
-            });
-
         </script>
-
     @endpush
-@endif
 {{-- End of Extra CSS and JS --}}
 {{-- ########################################## --}}

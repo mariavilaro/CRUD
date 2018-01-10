@@ -19,7 +19,7 @@
 	<div class="col-md-8 col-md-offset-2">
 		<!-- Default box -->
         @if ($returnUrl != $crud->route)
-            <a href="{{ url($returnUrl) }}"><i class="fa fa-angle-double-left"></i> {{ trans('backpack::crud.back_to_all') }} <span>{{ $crud->entity_name_plural }}</span></a><br><br>
+            <a href="{{ url(urldecode($returnUrl)) }}"><i class="fa fa-angle-double-left"></i> {{ trans('backpack::crud.back_to_all') }} <span>{{ $crud->entity_name_plural }}</span></a><br><br>
 		@elseif ($crud->hasAccess('list'))
 			<a href="{{ url($crud->route) }}"><i class="fa fa-angle-double-left"></i> {{ trans('backpack::crud.back_to_all') }} <span>{{ $crud->entity_name_plural }}</span></a><br><br>
 		@endif
@@ -37,7 +37,7 @@
 					  </button>
 					  <ul class="dropdown-menu">
 					  	@foreach ($crud->model->getAvailableLocales() as $key => $locale)
-						  	<li><a href="{{ url($crud->route.'/'.$entry->getKey().'/edit') }}?locale={{ $key }}">{{ $locale }}</a></li>
+						  	<li><a href="{{ url($crud->route.'/'.$entry->getKey().'/edit') }}?locale={{ $key }}{{ ($returnUrl != $crud->route) ? '&return_url=' . urlencode($returnUrl) : '' }}">{{ $locale }}</a></li>
 					  	@endforeach
 					  </ul>
 					</div>

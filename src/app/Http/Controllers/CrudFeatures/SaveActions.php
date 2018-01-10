@@ -70,7 +70,7 @@ trait SaveActions
                     $redirectUrl .= $this->crud->create_param . '=' . \Request::input($this->crud->create_param) . '&';
                 }
                 if ($returnUrl != $this->crud->route) {
-                    $redirectUrl .= 'return_url='.$returnUrl . '&';
+                    $redirectUrl .= 'return_url='.urlencode($returnUrl) . '&';
                 }
                 $redirectUrl = rtrim($redirectUrl, '?&');
                 break;
@@ -84,13 +84,13 @@ trait SaveActions
                     $redirectUrl .= $this->crud->create_param . '=' . \Request::input($this->crud->create_param) . '&';
                 }
                 if ($returnUrl != $this->crud->route) {
-                    $redirectUrl .= 'return_url='.$returnUrl . '&';
+                    $redirectUrl .= 'return_url='.urlencode($returnUrl). '&';
                 }
                 $redirectUrl = rtrim($redirectUrl, '?&');
                 break;
             case 'save_and_back':
             default:
-                $redirectUrl = $returnUrl;
+                $redirectUrl = urldecode($returnUrl);
                 break;
         }
 
