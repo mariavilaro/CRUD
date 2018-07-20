@@ -24,9 +24,7 @@
         }
     ],
     "require": {
-        "backpack/base": "^0.8.0",
-        "laravelcollective/html": "~5.0",
-        "barryvdh/laravel-elfinder": "^0.3.10",
+        "backpack/base": "^0.9.0",
         "doctrine/dbal": "^2.5",
         "venturecraft/revisionable": "1.*",
         "intervention/image": "^2.3"
@@ -35,7 +33,8 @@
         "phpunit/phpunit": "~6.0",
         "scrutinizer/ocular": "~1.1",
         "orchestra/testbench": "~3.0",
-        "orchestra/database": "~3.4"
+        "orchestra/database": "~3.4",
+        "spatie/laravel-translatable": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -60,7 +59,10 @@
         "laravel": {
             "providers": [
                 "Backpack\\CRUD\\CrudServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "CRUD": "Backpack\\CRUD\\CrudServiceProvider"
+            }
         }
     }
 }
